@@ -1,3 +1,5 @@
+forked from https://www.biaodianfu.com/logistic-regression.html
+
 ####ridge regression
 from sklearn.linear_model import Ridge
 from sklearn.datasets import load_boston
@@ -13,3 +15,30 @@ train_score = model.score(X_train, y_train)  # 模型对训练样本得准确性
 test_score = model.score(X_test, y_test)  # 模型对测试集的准确性
 print(train_score)
 print(test_score)
+
+#其中alpha的值为岭系数，scikit-learn提供了类RidgeCV，它可以自动执行网格搜索，来寻找最佳值：
+from sklearn.linear_model import RidgeCV
+from sklearn.datasets import load_boston
+from sklearn.model_selection import train_test_split
+boston = load_boston()
+X = boston.data
+y = boston.target
+# 把数据分为训练数据集和测试数据集(20%数据作为测试数据集）
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=3)
+model = RidgeCV(alphas=[1.0, 0.5, 0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001], normalize=True)
+model.fit(X_train, y_train)
+print(model.alpha_)
+
+
+###Lasso regression
+from sklearn.datasets import load_boston
+from sklearn.linear_model import LassoCV, ElasticNetCV
+boston = load_boston()
+# Find the optimal alpha value for Lasso regression
+lscv = LassoCV(alphas=(1.0, 0.1, 0.01, 0.001, 0.005, 0.0025, 0.001, 0.00025), normalize=True)
+lscv.fit(boston.data, boston.target)
+print('Lasso optimal alpha: %.3f' % lscv.alpha_)
+# Find the optimal alpha and l1_ratio for Elastic Net
+encv = ElasticNetCV(alphas=(0.1, 0.01, 0.005, 0.0025, 0.001), l1_ratio=(0.1, 0.25, 0.5, 0.75, 0.8), normalize=True)
+encv.fit(boston.data, boston.target)
+print('ElasticNet optimal alpha: %.3f and L1 ratio: %.4f' % (encv.alpha_, encv.l1_ratio_))
